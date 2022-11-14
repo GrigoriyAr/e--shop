@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<label for="order_uid">Введите uid заказа:</label>
+<input type="text" id="order_uid" name="order_uid" required>
+<button onclick="get()">Получить</button>
+<div>
+<pre id="content">
+
+</pre>
+</div>
+
+
+
+<script>
+    function get() {
+        var xmlHttp = new XMLHttpRequest();
+        var val=document.getElementById("order_uid").value
+        xmlHttp.open( "GET", "/api/order/"+val, false );
+        xmlHttp.send( null );
+        document.getElementById("content").innerHTML=''
+        var content=""
+        if(xmlHttp.status!==200){
+            document.getElementById("content").innerHTML="Не найдено!"
+            return
+        }else{
+            var order=JSON.parse(xmlHttp.responseText)
+            content=JSON.stringify(order, null, 4);
+        }
+        var table=document.createElement("table")
+        var firstRow=document.createElement("tr")
+        var secondRow=document.createElement("tr")
+        console.log(order)
+        var okeys=Object.keys(order)
+        for (k=0;k<okeys.length;k++ ){
+            var h=document.createElement("th")
+            h.innerHTML=okeys.at(k).replace("_"," ")
+            firstRow.appendChild(h)
+
+            var r=document.createElement("td")
+            r.innerHTML=JSON.stringify(order[okeys.at(k)])
+            secondRow.appendChild(r)
+
+        }
+        table.appendChild(firstRow)
+        table.appendChild(secondRow)
+
+        document.getElementById("content").appendChild(table)
+        return xmlHttp.responseText;
+    }
+
+</script>
+</body>
+</html>
